@@ -1,11 +1,20 @@
 "use client";
 
+import { Syne } from "next/font/google";
 import { motion, useMotionValue, useSpring, useInView } from "framer-motion";
 import {
   ArrowUpRight, ShieldCheck, Sparkles, CheckCircle2,
   TrendingDown, GitBranch, Eye, Clock, AlertTriangle, Zap,
 } from "lucide-react";
 import { useEffect, useRef, useState, ReactNode } from "react";
+
+// Configure the Syne font
+const syne = Syne({
+  subsets: ["latin"],
+  weight: ["700", "800"],
+  display: "swap",
+});
+
 
 // framer-motion typings don't accept numeric bezier arrays directly for 'ease' in some setups
 const EASE_BEZIER: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -53,7 +62,6 @@ const STATUS_CONFIG = {
   flagged:  { label: "Flagged",  color: "text-amber-400",   bg: "bg-amber-400/10",   dot: "bg-amber-400"   },
   pending:  { label: "Pending",  color: "text-slate-400",   bg: "bg-slate-400/10",   dot: "bg-slate-400"   },
 };
-
 function LiveExpenseTicker() {
   const [active, setActive] = useState(0);
 
@@ -254,9 +262,9 @@ export default function HeroSection() {
   });
 
   return (
-    <section
-      ref={containerRef}
-      className="relative min-h-screen overflow-hidden bg-[#050816]"
+   <section
+  ref={containerRef}
+  className={`${syne.className} relative min-h-screen overflow-hidden bg-[#050816]`}
       style={{ paddingTop: "clamp(100px, 14vw, 152px)", paddingBottom: "clamp(60px, 8vw, 120px)" }}
     >
       {/* ── Canvas dot grid ── */}
@@ -310,7 +318,7 @@ export default function HeroSection() {
             {/* Headline */}
             <motion.h1
               {...fadeUp(0.12)}
-              className="max-w-2xl font-['Syne',sans-serif] text-[clamp(2.1rem,6vw,4.5rem)] font-bold leading-[1.04] tracking-tight text-white"
+              className="max-w-2xl text-[clamp(2.1rem,6vw,4.5rem)] font-bold leading-[1.04] tracking-tight text-white"
             >
               Automate Expense{" "}
               <span
@@ -562,14 +570,6 @@ export default function HeroSection() {
           </div>
         </motion.div>
       </div>
-
-      {/* Syne font import */}
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap');
-        @media (min-width: 480px) { .xs\\:block { display: block; } }
-        html { scroll-behavior: smooth; }
-        body { overflow-x: hidden; }
-      `}</style>
     </section>
   );
 }
