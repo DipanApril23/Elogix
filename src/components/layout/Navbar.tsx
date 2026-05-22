@@ -28,7 +28,6 @@ import {
   CreditCard,
   LayoutDashboard,
   type LucideIcon,
-  X,
 } from "lucide-react";
 
 /* ───────────────────────── animation ───────────────────────── */
@@ -37,15 +36,15 @@ const SMOOTH_EASE: Transition["ease"] = [0.16, 1, 0.3, 1];
 
 const FAST_SPRING: Transition = {
   type: "spring",
-  stiffness: 420,
-  damping: 32,
-  mass: 0.7,
+  stiffness: 400,
+  damping: 30,
+  mass: 0.6,
 };
 
-const MENU_SPRING: Transition = {
+const TOGGLE_SPRING: Transition = {
   type: "spring",
-  stiffness: 340,
-  damping: 30,
+  stiffness: 380,
+  damping: 26,
 };
 
 /* ───────────────────────── types ───────────────────────── */
@@ -119,102 +118,56 @@ const WORKFLOW_DROPDOWN: DropdownItem[] = [
 ];
 
 const NAV_ITEMS: NavItem[] = [
-  {
-    label: "Features",
-    href: "#features",
-    dropdown: FEATURES_DROPDOWN,
-  },
-  {
-    label: "Workflow",
-    href: "#workflow",
-    dropdown: WORKFLOW_DROPDOWN,
-  },
-  {
-    label: "Security",
-    href: "#security",
-  },
-  {
-    label: "Pricing",
-    href: "#pricing",
-  },
-  {
-    label: "Contact",
-    href: "#contact",
-  },
+  { label: "Features", href: "#features", dropdown: FEATURES_DROPDOWN },
+  { label: "Workflow", href: "#workflow", dropdown: WORKFLOW_DROPDOWN },
+  { label: "Security", href: "#security" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Contact", href: "#contact" },
 ];
 
 /* ───────────────────────── dropdown ───────────────────────── */
 
-function NavDropdown({
-  items,
-  isOpen,
-}: NavDropdownProps): ReactNode {
+function NavDropdown({ items, isOpen }: NavDropdownProps): ReactNode {
   return (
     <AnimatePresence mode="wait">
       {isOpen && (
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 10,
-            scale: 0.97,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-            scale: 1,
-          }}
-          exit={{
-            opacity: 0,
-            y: 8,
-            scale: 0.98,
-          }}
-          transition={{
-            duration: 0.22,
-            ease: SMOOTH_EASE,
-          }}
-          className="absolute left-1/2 top-full z-50 mt-4 w-64 -translate-x-1/2"
+          initial={{ opacity: 0, y: 14, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 8, scale: 0.97 }}
+          transition={{ duration: 0.22, ease: SMOOTH_EASE }}
+          className="absolute left-1/2 top-full z-50 mt-3.5 w-64 -translate-x-1/2"
         >
-          <div className="absolute -top-[7px] left-1/2 h-3.5 w-3.5 -translate-x-1/2 rotate-45 border-l border-t border-white/10 bg-[#0d1525]" />
+          {/* Pointer arrow — crisp white, no glass bleed */}
+          <div className="absolute -top-[6px] left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 border-l border-t border-slate-200/80 bg-white" />
 
-          <div className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-[#0d1525]/95 p-1.5 shadow-[0_25px_80px_rgba(0,0,0,0.65)] backdrop-blur-3xl">
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-400/50 to-transparent" />
-
+          {/* Dropdown panel — fully opaque white */}
+          <div className="relative overflow-hidden rounded-[22px] border border-slate-200/70 bg-white p-1.5 shadow-[0_20px_48px_rgba(99,102,241,0.12),0_6px_20px_rgba(0,0,0,0.06)]">
             {items.map((item, i) => {
               const Icon = item.icon;
-
               return (
                 <motion.a
                   key={item.label}
                   href={item.href}
-                  initial={{
-                    opacity: 0,
-                    x: -8,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    x: 0,
-                  }}
-                  transition={{
-                    delay: i * 0.03,
-                    duration: 0.18,
-                  }}
-                  className="group flex items-center gap-3 rounded-2xl px-3 py-3 transition-all duration-200 hover:bg-white/[0.05]"
+                  initial={{ opacity: 0, x: -6 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.04, duration: 0.2 }}
+                  className="group flex items-center gap-3 rounded-[16px] px-3 py-2.5 transition-all duration-200 hover:bg-indigo-50/70"
                 >
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/[0.06] bg-gradient-to-br from-indigo-500/15 to-violet-500/15">
-                    <Icon className="h-4 w-4 text-indigo-300" />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-violet-50 shadow-sm transition-all duration-300 group-hover:border-indigo-200 group-hover:shadow-[0_4px_12px_rgba(99,102,241,0.15)] group-hover:scale-105">
+                    <Icon className="h-3.5 w-3.5 text-indigo-600" />
                   </div>
 
                   <div className="flex flex-col">
-                    <span className="text-[13px] font-medium text-white">
+                    <span className="text-[12.5px] font-semibold text-slate-800">
                       {item.label}
                     </span>
-
-                    <span className="text-[11px] text-slate-500">
+                    <span className="text-[10.5px] text-slate-500 leading-tight">
                       {item.desc}
                     </span>
                   </div>
 
-                  <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-slate-600 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100 group-hover:text-indigo-400" />
+                  <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-indigo-400 opacity-0 -translate-x-1 translate-y-1 transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100" />
                 </motion.a>
               );
             })}
@@ -227,96 +180,65 @@ function NavDropdown({
 
 /* ───────────────────────── mobile nav item ───────────────────────── */
 
-function MobileNavItem({
-  item,
-  idx,
-  onClick,
-}: MobileNavItemProps): ReactNode {
+function MobileNavItem({ item, idx, onClick }: MobileNavItemProps): ReactNode {
   const [open, setOpen] = useState(false);
-
   const hasDropdown = Boolean(item.dropdown?.length);
 
   return (
     <motion.div
-      initial={{
-        opacity: 0,
-        x: 20,
-      }}
-      animate={{
-        opacity: 1,
-        x: 0,
-      }}
-      transition={{
-        delay: idx * 0.04,
-        duration: 0.25,
-        ease: SMOOTH_EASE,
-      }}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: idx * 0.03, duration: 0.22, ease: SMOOTH_EASE }}
     >
       {hasDropdown ? (
         <div className="overflow-hidden rounded-2xl">
           <button
             onClick={() => setOpen((prev) => !prev)}
-            className="group flex w-full items-center justify-between rounded-2xl px-4 py-4 transition-all duration-200 active:scale-[0.98]"
+            className="group flex w-full items-center justify-between rounded-2xl px-4 py-2.5 text-left transition-all duration-200 hover:bg-indigo-50/70 active:scale-[0.99]"
           >
-            <span className="text-[15px] font-medium text-white">
+            <span className="text-[13.5px] font-semibold text-slate-700 transition-colors duration-200 group-hover:text-indigo-600">
               {item.label}
             </span>
-
             <motion.div
-              animate={{
-                rotate: open ? 180 : 0,
-              }}
+              animate={{ rotate: open ? 180 : 0 }}
               transition={FAST_SPRING}
+              className={`flex h-5 w-5 items-center justify-center rounded-full transition-colors duration-200 ${
+                open ? "bg-indigo-100" : "bg-slate-100/80"
+              }`}
             >
-              <ChevronDown className="h-4 w-4 text-slate-500 transition-colors duration-200 group-hover:text-white" />
+              <ChevronDown
+                className={`h-3.5 w-3.5 transition-colors duration-200 ${
+                  open ? "text-indigo-600" : "text-slate-500"
+                }`}
+              />
             </motion.div>
           </button>
 
           <AnimatePresence initial={false}>
             {open && (
               <motion.div
-                initial={{
-                  height: 0,
-                  opacity: 0,
-                }}
-                animate={{
-                  height: "auto",
-                  opacity: 1,
-                }}
-                exit={{
-                  height: 0,
-                  opacity: 0,
-                }}
-                transition={{
-                  duration: 0.22,
-                  ease: SMOOTH_EASE,
-                }}
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25, ease: SMOOTH_EASE }}
                 className="overflow-hidden"
               >
-                <div className="space-y-1 px-2 pb-2">
+                <div className="mx-2 mb-2 space-y-0.5 rounded-xl border border-indigo-100/60 bg-indigo-50/40 p-1.5">
                   {item.dropdown?.map((sub) => {
                     const Icon = sub.icon;
-
                     return (
                       <a
                         key={sub.label}
                         href={sub.href}
                         onClick={onClick}
-                        className="group flex items-center gap-3 rounded-2xl px-4 py-3 transition-all duration-200 hover:bg-white/[0.04]"
+                        className="group flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200 hover:bg-white hover:shadow-sm"
                       >
-                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-500/10">
-                          <Icon className="h-3.5 w-3.5 text-indigo-400" />
+                        <div className="flex h-6 w-6 items-center justify-center rounded-md bg-indigo-100 text-indigo-600 transition-all duration-200 group-hover:bg-indigo-600 group-hover:text-white">
+                          <Icon className="h-3 w-3" />
                         </div>
-
-                        <div className="flex flex-col">
-                          <span className="text-[13px] font-medium text-slate-200">
-                            {sub.label}
-                          </span>
-
-                          <span className="text-[11px] text-slate-500">
-                            {sub.desc}
-                          </span>
-                        </div>
+                        <span className="text-[12px] font-medium text-slate-600 transition-colors duration-200 group-hover:text-slate-900">
+                          {sub.label}
+                        </span>
                       </a>
                     );
                   })}
@@ -329,13 +251,12 @@ function MobileNavItem({
         <a
           href={item.href}
           onClick={onClick}
-          className="group flex items-center justify-between rounded-2xl px-4 py-4 transition-all duration-200 hover:bg-white/[0.04]"
+          className="group flex items-center justify-between rounded-2xl px-4 py-2.5 transition-all duration-200 hover:bg-indigo-50/70"
         >
-          <span className="text-[15px] font-medium text-white">
+          <span className="text-[13.5px] font-semibold text-slate-700 transition-colors duration-200 group-hover:text-indigo-600">
             {item.label}
           </span>
-
-          <ArrowUpRight className="h-4 w-4 text-slate-600 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100 group-hover:text-indigo-400" />
+          <ArrowUpRight className="h-3.5 w-3.5 -translate-x-1 text-indigo-400 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100" />
         </a>
       )}
     </motion.div>
@@ -346,216 +267,156 @@ function MobileNavItem({
 
 export default function Navbar(): ReactNode {
   const [mobileOpen, setMobileOpen] = useState(false);
-
   const [scrolled, setScrolled] = useState(false);
-
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-
   const [scrollPct, setScrollPct] = useState(0);
 
   const navRef = useRef<HTMLElement | null>(null);
-
   const dropdownTimeout = useRef<NodeJS.Timeout | null>(null);
-
   const { scrollYProgress } = useScroll();
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
     setScrollPct(value);
   });
 
-  /* scroll */
   useEffect(() => {
-    const onScroll = (): void => {
-      setScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener("scroll", onScroll, {
-      passive: true,
-    });
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    };
+    const onScroll = (): void => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /* body lock */
-  useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [mobileOpen]);
-
-  /* outside click */
   useEffect(() => {
     const handler = (e: MouseEvent): void => {
-      if (
-        navRef.current &&
-        !navRef.current.contains(e.target as Node)
-      ) {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
         setOpenDropdown(null);
+        setMobileOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handler);
-
-    return () => {
-      document.removeEventListener("mousedown", handler);
-    };
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
   const openMenu = useCallback((label: string): void => {
-    if (dropdownTimeout.current) {
-      clearTimeout(dropdownTimeout.current);
-    }
-
+    if (dropdownTimeout.current) clearTimeout(dropdownTimeout.current);
     setOpenDropdown(label);
   }, []);
 
   const closeMenu = useCallback((): void => {
-    dropdownTimeout.current = setTimeout(() => {
-      setOpenDropdown(null);
-    }, 80);
+    dropdownTimeout.current = setTimeout(() => setOpenDropdown(null), 100);
   }, []);
 
   return (
     <>
-      {/* progress */}
+      {/* Scroll progress bar */}
       <motion.div
-        className="fixed inset-x-0 top-0 z-[80] h-[2px] origin-left bg-gradient-to-r from-indigo-400 via-violet-400 to-pink-400"
-        style={{
-          scaleX: scrollPct,
-        }}
+        className="fixed inset-x-0 top-0 z-[100] h-[2.5px] origin-left bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500"
+        style={{ scaleX: scrollPct }}
       />
 
-      {/* header */}
+      {/* Header */}
       <motion.header
         ref={navRef}
-        initial={{
-          y: -70,
-          opacity: 0,
-        }}
-        animate={{
-          y: 0,
-          opacity: 1,
-        }}
-        transition={{
-          duration: 0.45,
-          ease: SMOOTH_EASE,
-        }}
-        className="fixed inset-x-0 top-0 z-50"
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: SMOOTH_EASE }}
+        className="fixed inset-x-0 top-0 z-50 px-4 pt-3 sm:px-6 lg:px-8"
       >
-        {/* background */}
-        <div
-          className={`absolute inset-0 transition-all duration-300 ${
-            scrolled || mobileOpen
-              ? "bg-[#050816]/80 backdrop-blur-3xl"
-              : "bg-transparent"
-          }`}
-        />
+        {/* ── Pill container ──
+            KEY FIX: background is now 88 → 97% opaque white so it never
+            blends with the hero dot-grid. Border is slate (visible), shadow
+            is rich indigo-tinted so it "lifts" the bar off the page.        */}
+        <motion.div
+          animate={{
+            height: scrolled ? 54 : 66,
+            backgroundColor:
+              scrolled || mobileOpen
+                ? "rgba(255, 255, 255, 0.98)"
+                : "rgba(255, 255, 255, 0.90)",
+            boxShadow: scrolled
+              ? "0 8px 32px -4px rgba(99,102,241,0.14), 0 2px 12px -2px rgba(0,0,0,0.07), 0 0 0 1px rgba(99,102,241,0.07)"
+              : "0 4px 24px rgba(99,102,241,0.07), 0 1px 8px rgba(0,0,0,0.05), 0 0 0 1px rgba(148,163,184,0.18)",
+          }}
+          transition={{ duration: 0.4, ease: SMOOTH_EASE }}
+          className="relative mx-auto flex max-w-7xl items-center justify-between rounded-full border border-slate-200/70 px-4.5 backdrop-blur-2xl"
+        >
 
-        {/* removed grey border issue */}
-        <div
-          className={`absolute bottom-0 inset-x-0 h-px transition-opacity duration-300 ${
-            scrolled || mobileOpen
-              ? "opacity-100 bg-white/[0.05]"
-              : "opacity-0"
-          }`}
-        />
-
-        {/* glow */}
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-400/30 to-transparent" />
-
-        <div className="relative mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* logo */}
-          <Link
-            href="/"
-            className="group relative z-20 flex items-center gap-3"
-          >
-            <div className="relative">
-              <div className="absolute -inset-2 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-40" />
-
-              <div className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-[0_10px_40px_rgba(99,102,241,0.45)]">
-                <div className="absolute inset-0 -translate-x-full skew-x-12 bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-
-                <span className="relative z-10 text-sm font-bold text-white">
+          {/* ── Logo ── */}
+          <Link href="/" className="group relative z-20 flex items-center gap-2 pl-0.5">
+            <motion.div
+              animate={{ scale: scrolled ? 0.92 : 1 }}
+              transition={{ duration: 0.3 }}
+              className="relative"
+            >
+              <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-30" />
+              <div className="relative flex h-8.5 w-8.5 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-[0_6px_20px_rgba(99,102,241,0.38)]">
+                <div className="absolute inset-0 -translate-x-full skew-x-12 bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+                <span className="relative z-10 text-[11.5px] font-bold tracking-tight text-white">
                   E
                 </span>
               </div>
-            </div>
+            </motion.div>
 
             <div className="flex flex-col">
-              <span className="text-[16px] font-semibold tracking-tight text-white">
+              <motion.span
+                animate={{ fontSize: scrolled ? "14px" : "14.5px" }}
+                className="font-bold tracking-tight text-slate-800 transition-colors duration-300 group-hover:text-indigo-600"
+              >
                 Expendesk
-              </span>
-
-              <span className="hidden text-[9px] uppercase tracking-[0.24em] text-slate-500 min-[480px]:block">
-                Intelligence
-              </span>
+              </motion.span>
+              <AnimatePresence>
+                {!scrolled && (
+                  <motion.span
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="text-[7.5px] uppercase tracking-[0.25em] font-semibold text-indigo-500/70"
+                  >
+                    Intelligence
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </div>
           </Link>
 
-          {/* desktop nav */}
-          <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center md:flex">
+          {/* ── Desktop nav ── */}
+          <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-0.5 md:flex">
             {NAV_ITEMS.map((item) => {
-              const hasDropdown = Boolean(
-                item.dropdown?.length
-              );
-
-              const isOpen =
-                openDropdown === item.label;
+              const hasDropdown = Boolean(item.dropdown?.length);
+              const isOpen = openDropdown === item.label;
 
               return (
                 <div
                   key={item.label}
                   className="relative"
-                  onMouseEnter={() =>
-                    openMenu(item.label)
-                  }
+                  onMouseEnter={() => openMenu(item.label)}
                   onMouseLeave={closeMenu}
                 >
                   {hasDropdown ? (
-                    <button className="group relative flex items-center gap-1 rounded-full px-4 py-2.5 text-[13px] font-medium text-slate-300 transition-all duration-200 hover:text-white">
-                      <span className="relative">
-                        {item.label}
-
-                        <span className="absolute -bottom-1 left-0 h-px w-0 bg-gradient-to-r from-indigo-400 to-violet-400 transition-all duration-200 group-hover:w-full" />
-                      </span>
-
+                    <button className="nav-underline-item group relative flex items-center gap-1 rounded-full px-3.5 py-1.5 text-[12.5px] font-medium text-slate-600 transition-colors duration-200 hover:text-indigo-600">
+                      <span>{item.label}</span>
                       <motion.div
-                        animate={{
-                          rotate: isOpen ? 180 : 0,
-                        }}
+                        animate={{ rotate: isOpen ? 180 : 0 }}
                         transition={FAST_SPRING}
                       >
-                        <ChevronDown className="h-3.5 w-3.5 text-slate-500 transition-colors duration-200 group-hover:text-white" />
+                        <ChevronDown className="h-3.5 w-3.5 text-slate-400 transition-colors duration-200 group-hover:text-indigo-500" />
                       </motion.div>
                     </button>
                   ) : (
                     <a
                       href={item.href}
-                      className="group relative rounded-full px-4 py-2.5 text-[13px] font-medium text-slate-300 transition-all duration-200 hover:text-white"
+                      className="nav-underline-item group relative block rounded-full px-3.5 py-1.5 text-[12.5px] font-medium text-slate-600 transition-colors duration-200 hover:text-indigo-600"
                     >
-                      <span className="relative">
-                        {item.label}
-
-                        <span className="absolute -bottom-1 left-0 h-px w-0 bg-gradient-to-r from-indigo-400 to-violet-400 transition-all duration-200 group-hover:w-full" />
-                      </span>
+                      <span>{item.label}</span>
                     </a>
                   )}
 
                   {hasDropdown && item.dropdown && (
                     <div
-                      onMouseEnter={() =>
-                        openMenu(item.label)
-                      }
+                      onMouseEnter={() => openMenu(item.label)}
                       onMouseLeave={closeMenu}
                     >
-                      <NavDropdown
-                        items={item.dropdown}
-                        isOpen={isOpen}
-                      />
+                      <NavDropdown items={item.dropdown} isOpen={isOpen} />
                     </div>
                   )}
                 </div>
@@ -563,209 +424,144 @@ export default function Navbar(): ReactNode {
             })}
           </nav>
 
-          {/* desktop buttons */}
-          <div className="hidden items-center gap-3 md:flex">
-
+          {/* ── Desktop CTA ── */}
+          <div className="hidden items-center md:flex pr-0.5">
             <motion.a
-              whileHover={{
-                scale: 1.02,
-              }}
-              whileTap={{
-                scale: 0.98,
+              whileHover={{ scale: 1.025, y: -0.5 }}
+              whileTap={{ scale: 0.975 }}
+              animate={{
+                paddingTop: scrolled ? "6px" : "8px",
+                paddingBottom: scrolled ? "6px" : "8px",
+                fontSize: scrolled ? "12px" : "12.5px",
               }}
               transition={FAST_SPRING}
               href="#demo"
-              className="group relative overflow-hidden rounded-full bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 px-5 py-2.5 text-[13px] font-medium text-white shadow-[0_10px_40px_rgba(99,102,241,0.4)]"
+              className="group relative overflow-hidden rounded-full bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 px-4.5 font-semibold text-white shadow-[0_6px_20px_rgba(99,102,241,0.32),0_2px_8px_rgba(139,92,246,0.18)]"
             >
-              <div className="absolute inset-0 -translate-x-full skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-
+              {/* Shimmer sweep */}
+              <div className="absolute inset-0 -translate-x-full skew-x-12 bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
               <span className="relative z-10 flex items-center gap-1.5">
                 Book a Demo
-
-                <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </span>
             </motion.a>
           </div>
 
-          {/* mobile hamburger */}
+          {/* ── Hamburger → Cross ── */}
           <button
-            onClick={() =>
-              setMobileOpen((prev) => !prev)
-            }
-            aria-label="Toggle mobile menu"
-            className={`relative z-[90] flex h-11 w-11 items-center justify-center rounded-2xl transition-all duration-300 md:hidden ${
-              mobileOpen
-                ? "bg-indigo-500/10"
-                : "bg-white/[0.04]"
-            }`}
+            onClick={() => setMobileOpen((prev) => !prev)}
+            aria-label="Toggle menu"
+            className="relative z-[90] flex h-8.5 w-8.5 items-center justify-center rounded-xl transition-all duration-300 md:hidden hover:bg-indigo-50"
           >
-            <div className="relative h-5 w-5">
-              {/* top */}
+            <div className="relative flex h-3 w-4 flex-col justify-between">
               <motion.span
-                animate={{
-                  rotate: mobileOpen ? 45 : 0,
-                  y: mobileOpen ? 8 : 2,
-                }}
-                transition={MENU_SPRING}
-                className="absolute left-0 top-0 h-[2px] w-5 rounded-full bg-white"
+                animate={mobileOpen ? { rotate: 45, y: 5 } : { rotate: 0, y: 0 }}
+                transition={TOGGLE_SPRING}
+                className="h-[2px] w-4 origin-center rounded-full bg-slate-700"
               />
-
-              {/* middle */}
               <motion.span
-                animate={{
-                  opacity: mobileOpen ? 0 : 1,
-                  scaleX: mobileOpen ? 0 : 1,
-                }}
-                transition={{
-                  duration: 0.15,
-                }}
-                className="absolute left-0 top-[8px] h-[2px] w-5 rounded-full bg-white"
+                animate={mobileOpen ? { opacity: 0, scale: 0 } : { opacity: 1, scale: 1 }}
+                transition={{ duration: 0.15 }}
+                className="h-[2px] w-4 rounded-full bg-slate-700"
               />
-
-              {/* bottom */}
               <motion.span
-                animate={{
-                  rotate: mobileOpen ? -45 : 0,
-                  y: mobileOpen ? -8 : 14,
-                }}
-                transition={MENU_SPRING}
-                className="absolute left-0 top-0 h-[2px] w-5 rounded-full bg-white"
+                animate={mobileOpen ? { rotate: -45, y: -5 } : { rotate: 0, y: 0 }}
+                transition={TOGGLE_SPRING}
+                className="h-[2px] w-4 origin-center rounded-full bg-slate-700"
               />
             </div>
           </button>
-        </div>
-      </motion.header>
 
-      {/* mobile menu */}
-      <AnimatePresence mode="wait">
-        {mobileOpen && (
-          <>
-            {/* overlay */}
-            <motion.div
-              initial={{
-                opacity: 0,
-              }}
-              animate={{
-                opacity: 1,
-              }}
-              exit={{
-                opacity: 0,
-              }}
-              transition={{
-                duration: 0.2,
-              }}
-              onClick={() =>
-                setMobileOpen(false)
-              }
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-xl md:hidden"
-            />
-
-            {/* drawer */}
-            <motion.div
-              initial={{
-                x: "100%",
-              }}
-              animate={{
-                x: 0,
-              }}
-              exit={{
-                x: "100%",
-              }}
-              transition={{
-                duration: 0.35,
-                ease: SMOOTH_EASE,
-              }}
-              className="fixed right-0 top-0 z-50 flex h-dvh w-full max-w-[340px] flex-col overflow-hidden bg-[#050816]/95 backdrop-blur-3xl md:hidden"
-            >
-              {/* glow */}
-              <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute left-[-100px] top-[-100px] h-[220px] w-[220px] rounded-full bg-indigo-500/15 blur-[100px]" />
-
-                <div className="absolute bottom-[-120px] right-[-120px] h-[240px] w-[240px] rounded-full bg-violet-500/15 blur-[120px]" />
-              </div>
-
-              {/* top */}
-              <div className="relative flex items-center justify-between border-b border-white/[0.06] px-5 py-5">
-                <div className="flex items-center gap-3">
-                  {/* logo */}
-                </div>
-
-                <button
-                  onClick={() =>
-                    setMobileOpen(false)
-                  }
-                  className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/[0.04]"
-                >
-                  <X className="h-4 w-4 text-white" />
-                </button>
-              </div>
-
-              {/* nav */}
-              <div className="relative flex-1 overflow-y-auto px-3 py-5">
-                <div className="space-y-1">
+          {/* ── Mobile dropdown ──
+              KEY FIX: solid white bg, strong shadow, slate border            */}
+          <AnimatePresence>
+            {mobileOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 12, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                transition={{ duration: 0.22, ease: SMOOTH_EASE }}
+                className="absolute right-1 top-[60px] z-50 w-full max-w-[270px] overflow-hidden rounded-[24px] border border-slate-200/70 bg-white p-2.5 shadow-[0_20px_50px_rgba(99,102,241,0.13),0_6px_20px_rgba(0,0,0,0.07)] md:hidden"
+              >
+                <div className="max-h-[55vh] space-y-0.5 overflow-y-auto pr-0.5">
                   {NAV_ITEMS.map((item, idx) => (
                     <MobileNavItem
                       key={item.label}
                       item={item}
                       idx={idx}
-                      onClick={() =>
-                        setMobileOpen(false)
-                      }
+                      onClick={() => setMobileOpen(false)}
                     />
                   ))}
                 </div>
-              </div>
 
-              {/* buttons */}
-              <div className="relative border-t border-white/[0.06] p-5">
-                <motion.a
-                  whileHover={{
-                    scale: 1.01,
-                  }}
-                  whileTap={{
-                    scale: 0.98,
-                  }}
-                  transition={FAST_SPRING}
-                  href="#demo"
-                  className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500 px-4 py-4 text-sm font-semibold text-white shadow-[0_10px_40px_rgba(99,102,241,0.45)]"
-                >
-                  <div className="absolute inset-0 -translate-x-full skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+                <div className="mt-2.5 border-t border-slate-100 pt-2.5">
+                  <motion.a
+                    whileTap={{ scale: 0.98 }}
+                    transition={FAST_SPRING}
+                    href="#demo"
+                    onClick={() => setMobileOpen(false)}
+                    className="group relative flex w-full items-center justify-center gap-1.5 overflow-hidden rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 py-2.5 text-[12px] font-semibold text-white shadow-lg shadow-indigo-500/20"
+                  >
+                    <div className="absolute inset-0 -translate-x-full skew-x-12 bg-gradient-to-r from-transparent via-white/15 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+                    <span className="relative z-10">Book a Demo</span>
+                    <Sparkles className="relative z-10 h-3.5 w-3.5" />
+                  </motion.a>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </motion.header>
 
-                  <span className="relative z-10">
-                    Book a Demo
-                  </span>
-
-                  <Sparkles className="relative z-10 h-4 w-4" />
-                </motion.a>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-
+      {/* ── Global styles ── */}
       <style jsx global>{`
         * {
           -webkit-tap-highlight-color: transparent;
         }
-
         html {
           scroll-behavior: smooth;
         }
-
         body {
           overflow-x: hidden;
-          background: #050816;
           text-rendering: optimizeLegibility;
           -webkit-font-smoothing: antialiased;
         }
 
-        ::-webkit-scrollbar {
-          width: 6px;
+        /*
+         * Animated underline for desktop nav items
+         * → Enters left-to-right (transform-origin: left, scaleX 0→1)
+         * → Exits right-to-left (transform-origin: right, scaleX 1→0)
+         *
+         * The CSS trick: both transform-origin and scaleX change on hover,
+         * so on enter origin flips to "left" as scale grows, giving a left→right
+         * paint. On leave origin flips to "right" as scale shrinks, giving a
+         * right→left retract.
+         */
+        .nav-underline-item {
+          position: relative;
+        }
+        .nav-underline-item::after {
+          content: "";
+          position: absolute;
+          bottom: 5px;
+          left: 14px;
+          right: 14px;
+          height: 1.5px;
+          border-radius: 9999px;
+          background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 60%, #a78bfa 100%);
+          transform: scaleX(0);
+          transform-origin: right center;
+          transition: transform 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .nav-underline-item:hover::after {
+          transform: scaleX(1);
+          transform-origin: left center;
         }
 
-        ::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.08);
-          border-radius: 999px;
+        /* Subtle active/focus ring for CTA */
+        .nav-cta:focus-visible {
+          outline: 2px solid rgba(99, 102, 241, 0.5);
+          outline-offset: 3px;
         }
       `}</style>
     </>
