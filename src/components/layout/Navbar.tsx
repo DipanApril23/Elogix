@@ -70,6 +70,8 @@ type NavDropdownProps = {
 type MobileNavItemProps = {
   item: NavItem;
   idx: number;
+  isOpen: boolean;
+  onToggle: () => void;
   onClick: () => void;
 };
 
@@ -180,8 +182,7 @@ function NavDropdown({ items, isOpen }: NavDropdownProps): ReactNode {
 
 /* ───────────────────────── mobile nav item ───────────────────────── */
 
-function MobileNavItem({ item, idx, onClick }: MobileNavItemProps): ReactNode {
-  const [open, setOpen] = useState(false);
+function MobileNavItem({ item, idx, isOpen, onToggle, onClick }: MobileNavItemProps): ReactNode {
   const hasDropdown = Boolean(item.dropdown?.length);
 
   return (
@@ -193,29 +194,29 @@ function MobileNavItem({ item, idx, onClick }: MobileNavItemProps): ReactNode {
       {hasDropdown ? (
         <div className="overflow-hidden rounded-2xl">
           <button
-            onClick={() => setOpen((prev) => !prev)}
+            onClick={onToggle}
             className="group flex w-full items-center justify-between rounded-2xl px-4 py-2.5 text-left transition-all duration-200 hover:bg-indigo-50/70 active:scale-[0.99]"
           >
             <span className="text-[13.5px] font-semibold text-slate-700 transition-colors duration-200 group-hover:text-indigo-600">
               {item.label}
             </span>
             <motion.div
-              animate={{ rotate: open ? 180 : 0 }}
+              animate={{ rotate: isOpen ? 180 : 0 }}
               transition={FAST_SPRING}
               className={`flex h-5 w-5 items-center justify-center rounded-full transition-colors duration-200 ${
-                open ? "bg-indigo-100" : "bg-slate-100/80"
+                isOpen ? "bg-indigo-100" : "bg-slate-100/80"
               }`}
             >
               <ChevronDown
                 className={`h-3.5 w-3.5 transition-colors duration-200 ${
-                  open ? "text-indigo-600" : "text-slate-500"
+                  isOpen ? "text-indigo-600" : "text-slate-500"
                 }`}
               />
             </motion.div>
           </button>
 
           <AnimatePresence initial={false}>
-            {open && (
+            {isOpen && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
@@ -269,6 +270,7 @@ export default function Navbar(): ReactNode {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [mobileOpenDropdown, setMobileOpenDropdown] = useState<string | null>(null);
   const [scrollPct, setScrollPct] = useState(0);
 
   const navRef = useRef<HTMLElement | null>(null);
@@ -290,6 +292,7 @@ export default function Navbar(): ReactNode {
       if (navRef.current && !navRef.current.contains(e.target as Node)) {
         setOpenDropdown(null);
         setMobileOpen(false);
+        setMobileOpenDropdown(null);
       }
     };
     document.addEventListener("mousedown", handler);
@@ -321,10 +324,7 @@ export default function Navbar(): ReactNode {
         transition={{ duration: 0.5, ease: SMOOTH_EASE }}
         className="fixed inset-x-0 top-0 z-50 px-4 pt-3 sm:px-6 lg:px-8"
       >
-        {/* ── Pill container ──
-            KEY FIX: background is now 88 → 97% opaque white so it never
-            blends with the hero dot-grid. Border is slate (visible), shadow
-            is rich indigo-tinted so it "lifts" the bar off the page.        */}
+        {/* ── Pill container ── */}
         <motion.div
           animate={{
             height: scrolled ? 54 : 66,
@@ -449,7 +449,10 @@ export default function Navbar(): ReactNode {
 
           {/* ── Hamburger → Cross ── */}
           <button
-            onClick={() => setMobileOpen((prev) => !prev)}
+            onClick={() => {
+              setMobileOpen((prev) => !prev);
+              setMobileOpenDropdown(null); // Clear open menus when closing container
+            }}
             aria-label="Toggle menu"
             className="relative z-[90] flex h-8.5 w-8.5 items-center justify-center rounded-xl transition-all duration-300 md:hidden hover:bg-indigo-50"
           >
@@ -472,8 +475,7 @@ export default function Navbar(): ReactNode {
             </div>
           </button>
 
-          {/* ── Mobile dropdown ──
-              KEY FIX: solid white bg, strong shadow, slate border            */}
+          {/* ── Mobile dropdown ── */}
           <AnimatePresence>
             {mobileOpen && (
               <motion.div
@@ -481,7 +483,7 @@ export default function Navbar(): ReactNode {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.96 }}
                 transition={{ duration: 0.22, ease: SMOOTH_EASE }}
-                className="absolute right-1 top-[60px] z-50 w-full max-w-[270px] overflow-hidden rounded-[24px] border border-slate-200/70 bg-white p-2.5 shadow-[0_20px_50px_rgba(99,102,241,0.13),0_6px_20px_rgba(0,0,0,0.07)] md:hidden"
+                className="absolute right-1 top-[70px] z-50 w-full max-w-[270px] overflow-hidden rounded-[24px] border border-slate-200/70 bg-white p-2.5 shadow-[0_20px_50px_rgba(99,102,241,0.13),0_6px_20px_rgba(0,0,0,0.07)] md:hidden padding-x-400"
               >
                 <div className="max-h-[55vh] space-y-0.5 overflow-y-auto pr-0.5">
                   {NAV_ITEMS.map((item, idx) => (
@@ -489,7 +491,16 @@ export default function Navbar(): ReactNode {
                       key={item.label}
                       item={item}
                       idx={idx}
-                      onClick={() => setMobileOpen(false)}
+                      isOpen={mobileOpenDropdown === item.label}
+                      onToggle={() =>
+                        setMobileOpenDropdown((prev) =>
+                          prev === item.label ? null : item.label
+                        )
+                      }
+                      onClick={() => {
+                        setMobileOpen(false);
+                        setMobileOpenDropdown(null);
+                      }}
                     />
                   ))}
                 </div>
@@ -499,7 +510,10 @@ export default function Navbar(): ReactNode {
                     whileTap={{ scale: 0.98 }}
                     transition={FAST_SPRING}
                     href="#demo"
-                    onClick={() => setMobileOpen(false)}
+                    onClick={() => {
+                      setMobileOpen(false);
+                      setMobileOpenDropdown(null);
+                    }}
                     className="group relative flex w-full items-center justify-center gap-1.5 overflow-hidden rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 py-2.5 text-[12px] font-semibold text-white shadow-lg shadow-indigo-500/20"
                   >
                     <div className="absolute inset-0 -translate-x-full skew-x-12 bg-gradient-to-r from-transparent via-white/15 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
@@ -527,16 +541,6 @@ export default function Navbar(): ReactNode {
           -webkit-font-smoothing: antialiased;
         }
 
-        /*
-         * Animated underline for desktop nav items
-         * → Enters left-to-right (transform-origin: left, scaleX 0→1)
-         * → Exits right-to-left (transform-origin: right, scaleX 1→0)
-         *
-         * The CSS trick: both transform-origin and scaleX change on hover,
-         * so on enter origin flips to "left" as scale grows, giving a left→right
-         * paint. On leave origin flips to "right" as scale shrinks, giving a
-         * right→left retract.
-         */
         .nav-underline-item {
           position: relative;
         }
@@ -558,7 +562,6 @@ export default function Navbar(): ReactNode {
           transform-origin: left center;
         }
 
-        /* Subtle active/focus ring for CTA */
         .nav-cta:focus-visible {
           outline: 2px solid rgba(99, 102, 241, 0.5);
           outline-offset: 3px;
